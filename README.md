@@ -1,6 +1,8 @@
 # PCRS_JSLINUX
 JSLINUX, ported to PCRS (prototype)
 
+emsdk is needed, please clone repo https://github.com/juj/emsdk.git and follow installation instructions.
+
 *To run:
 
 $ cd emsdk
