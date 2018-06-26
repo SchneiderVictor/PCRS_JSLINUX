@@ -1,0 +1,23 @@
+{
+  "name": "PCRS_JS_Linux",
+  "version": "1.0.0",
+  "description": "JS/Linux ported to PCRS",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {},
+  "keywords": [],
+  "author": "Andrew Petersen, Michelle Craig, Schneider Victor-Tulias",
+  "license": "ISC",
+  "bugs": {},
+  "homepage": "./README.md",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-logging": "^1.1.1",
+    "logops": "^2.1.0",
+    "mime": "^2.3.1"
+  }
+}
