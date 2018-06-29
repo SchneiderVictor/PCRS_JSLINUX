@@ -25,8 +25,7 @@ app.get('/', function(req, res) {
     res.render('index.html');
 });
 
-app.get('/style.css', function(req, res) {
-    
+app.get('/style.css', function(req, res) {    
     res.sendFile(__dirname + '/public/style.css');
 });
 
@@ -44,10 +43,32 @@ app.get('/term.js', function(req, res) {
 
 app.get('/jslinux.js', function(req, res) {
     res.sendFile(__dirname + '/public/jslinux.js');
+    console.log(req.referer);
 });
 
 app.get('/riscvemu64.js', function(req, res) {
     res.sendFile(__dirname + '/public/riscvemu64.js');
+});
+
+app.get('/root_9p-riscv64.cfg', function(req, res) {
+    res.sendFile(__dirname + '/public/root_9p-riscv64.cfg');
+});
+
+app.get('/bbl64.bin', function(req, res) {
+    res.sendFile(__dirname + '/public/bbl64.bin');
+});
+
+app.get(/^\/(prototype\/temp\/head|files\/\d+)/, function(req, res) {
+    var rx = new RegExp('/head.+');
+    var newUrl = req.originalUrl.match(rx);
+
+    //console.log(newUrl[0]);
+    
+    var url = "https://vfsync.org/u/os/buildroot-riscv64" + newUrl;
+
+    console.log(url);
+    
+    res.redirect(url);
 });
 
 app.post('/initialize', function (req, res) {

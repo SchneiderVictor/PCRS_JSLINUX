@@ -430,6 +430,7 @@ static void config_load_file(VMConfigLoadState *s, const char *filename,
     if (is_url(filename)) {
         s->file_load_cb = cb;
         s->file_load_opaque = opaque;
+        printf("config_fs_net");
         fs_wget(filename, NULL, NULL, s, config_load_file_cb, TRUE);
     } else
 #endif
