@@ -77,7 +77,7 @@ app.get(/^\/(tmp\/.+)/, function(req, res) {
 
 app.post('/initialize', function (req, res) {
     initialize();
-    res.redirect('index2.html');
+    res.redirect('index2.html?mem=16');
 });
 
 app.get('/images/upload-icon.png', function(req, res) {
