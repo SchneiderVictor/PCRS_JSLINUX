@@ -8,6 +8,7 @@ const app = express();
 const body_parser = require('body-parser');
 const path = require('path');
 var fs = require('fs');
+const http = require('https');
 
 express.static.mime.types['wasm'] = 'application/wasm';
 
@@ -17,9 +18,6 @@ app.set('views', __dirname + '/public');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(expressLogging(logger));
-
-//var tester = require('./test.js');
-//console.log(tester._sum(723, 272));
 
 app.get('/', function(req, res) {
     res.render('index.html');
@@ -43,7 +41,6 @@ app.get('/term.js', function(req, res) {
 
 app.get('/jslinux.js', function(req, res) {
     res.sendFile(__dirname + '/public/jslinux.js');
-    console.log(req.referer);
 });
 
 app.get('/riscvemu64.js', function(req, res) {
@@ -58,17 +55,24 @@ app.get('/bbl64.bin', function(req, res) {
     res.sendFile(__dirname + '/public/bbl64.bin');
 });
 
-app.get(/^\/(prototype\/temp\/head|files\/\d+)/, function(req, res) {
+app.get(/^\/(tmp\/.+)/, function(req, res) {
     var rx = new RegExp('/head.+');
-    var newUrl = req.originalUrl.match(rx);
+    var url = req.originalUrl.match(rx);
+    var newUrl;
+    var contentType = 'text/plain';
 
-    //console.log(newUrl[0]);
-    
-    var url = "https://vfsync.org/u/os/buildroot-riscv64" + newUrl;
+    if (url === null) {
+        rx = new RegExp('/files.+');
+        url = req.originalUrl.match(rx);
+        contentType = 'application/octet-stream';
+    }
 
-    console.log(url);
-    
-    res.redirect(url);
+    newUrl = "https://vfsync.org/u/os/buildroot-riscv64" + url;
+
+    http.get(newUrl, (response) => {
+        res.setHeader('Content-type', contentType);
+        response.pipe(res);
+    });
 });
 
 app.post('/initialize', function (req, res) {

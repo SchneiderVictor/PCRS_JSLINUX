@@ -183,7 +183,6 @@ static void init_vm_drive(void *arg);
 void vm_start(const char *url, int ram_size, const char *cmdline,
               const char *pwd, int width, int height, BOOL has_network)
 {
-    printf("*** log *** vm_start started\n");
     VMStartState *s;
 
     s = mallocz(sizeof(*s));
@@ -197,8 +196,6 @@ void vm_start(const char *url, int ram_size, const char *cmdline,
     s->p = mallocz(sizeof(VirtMachineParams));
     virt_machine_set_defaults(s->p);
     virt_machine_load_config_file(s->p, url, init_vm_fs, s);
-    
-    printf("*** log *** vm_start ended\n");
 }
 
 static void init_vm_fs(void *arg)

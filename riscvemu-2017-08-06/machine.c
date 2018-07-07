@@ -376,12 +376,12 @@ char *get_file_path(const char *base_filename, const char *filename)
 }
 
 
-//#ifdef EMSCRIPTEN
-//static int load_file(uint8_t **pbuf, const char *filename)
-//{
-//    abort();
-//}
-//#else
+#ifdef EMSCRIPTEN
+static int load_file(uint8_t **pbuf, const char *filename)
+{
+    abort();
+}
+#else
 /* return -1 if error. */
 static int load_file(uint8_t **pbuf, const char *filename)
 {
@@ -406,7 +406,7 @@ static int load_file(uint8_t **pbuf, const char *filename)
     *pbuf = buf;
     return size;
 }
-//#endif
+#endif
 
 #ifdef CONFIG_FS_NET
 static void config_load_file_cb(void *opaque, int err, void *data, size_t size)
@@ -430,16 +430,13 @@ static void config_load_file(VMConfigLoadState *s, const char *filename,
     if (is_url(filename)) {
         s->file_load_cb = cb;
         s->file_load_opaque = opaque;
-        printf("config_fs_net");
         fs_wget(filename, NULL, NULL, s, config_load_file_cb, TRUE);
     } else
 #endif
     {
         uint8_t *buf;
         int size;
-        printf("load file\n");
         size = load_file(&buf, filename);
-        printf("file loaded\n");
         cb(opaque, buf, size);
         free(buf);
     }
@@ -450,8 +447,6 @@ void virt_machine_load_config_file(VirtMachineParams *p,
                                    void (*start_cb)(void *opaque),
                                    void *opaque)
 {
-    printf("*** log *** virt_machine_load_config_file started\n");
-    
     VMConfigLoadState *s;
     
     s = mallocz(sizeof(*s));
@@ -461,14 +456,10 @@ void virt_machine_load_config_file(VirtMachineParams *p,
     p->cfg_filename = strdup(filename);
 
     config_load_file(s, filename, config_file_loaded, s);
-
-    printf("*** log *** virt_machine_load_config_file ended\n");
 }
 
 static void config_file_loaded(void *opaque, uint8_t *buf, int buf_len)
 {
-    printf("*** log *** config_file_loaded started\n");
-    
     VMConfigLoadState *s = opaque;
     VirtMachineParams *p = s->vm_params;
 
@@ -478,14 +469,10 @@ static void config_file_loaded(void *opaque, uint8_t *buf, int buf_len)
     /* load the additional files */
     s->file_index = 0;
     config_additional_file_load(s);
-
-    printf("*** log *** config_file_loaded ended\n");
 }
 
 static void config_additional_file_load(VMConfigLoadState *s)
 {
-    printf("*** log *** config_additional_file_load started\n");
-    
     VirtMachineParams *p = s->vm_params;
     while (s->file_index < VM_FILE_COUNT &&
            p->files[s->file_index].filename == NULL) {
@@ -504,8 +491,6 @@ static void config_additional_file_load(VMConfigLoadState *s)
                          config_additional_file_load_cb, s);
         free(fname);
     }
-
-    printf("*** log *** config_additional_file_load ended\n");
 }
 
 static void config_additional_file_load_cb(void *opaque,

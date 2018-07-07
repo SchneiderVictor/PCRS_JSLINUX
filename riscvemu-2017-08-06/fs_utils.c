@@ -207,8 +207,10 @@ int parse_uint64_base(uint64_t *pval, const char **pp, int base)
     while (isspace_nolf(*p))
         p++;
     *pval = strtoull(p, (char **)&p1, base);
-    if (p1 == p)
+    if (p1 == p) {
+        printf("*** log ***p1 == p\n");
         return -1;
+    }
     *pp = p1;
     return 0;
 }
@@ -293,6 +295,7 @@ const char *skip_header(const char *p)
 /* return 0 if OK, < 0 if error */
 int parse_tag(char *buf, int buf_size, const char *str, const char *tag)
 {
+    //printf("*** enter ***\n");
     char tagname[128], *q;
     const char *p, *p1;
     int len;
@@ -308,8 +311,11 @@ int parse_tag(char *buf, int buf_size, const char *str, const char *tag)
             p++;
         }
         *q = '\0';
-        if (*p != ':')
+        //printf("tagname: |%s|, tag: |%s|, strcmp: %d\n", tagname, tag, !strcmp(tagname, tag));
+        if (*p != ':') {
+            printf("return -1\n");
             return -1;
+        }
         p++;
         while (isspace_nolf(*p))
             p++;
@@ -338,8 +344,11 @@ int parse_tag_uint64(uint64_t *pval, const char *str, const char *tag)
 {
     char buf[64];
     const char *p;
-    if (parse_tag(buf, sizeof(buf), str, tag))
+    //printf("*** parse_tag_uint ***\n");
+    if (parse_tag(buf, sizeof(buf), str, tag)) {
+        //printf("*** log *** parse_tag\n");
         return -1;
+    }
     p = buf;
     return parse_uint64(pval, &p);
 }
@@ -348,6 +357,7 @@ int parse_tag_file_id(FSFileID *pval, const char *str, const char *tag)
 {
     char buf[64];
     const char *p;
+    //printf("*** parse_tag_file_id ***\n");
     if (parse_tag(buf, sizeof(buf), str, tag))
         return -1;
     p = buf;

@@ -493,8 +493,8 @@ function start_vm(user, pwd)
     /* read the parameters */
 
     params = get_params();
-    cpu = "riscv64"; //params["cpu"] || "x86";
-    url = params["url"];
+    cpu = params["cpu"] || "riscv64";
+    url = params["url"] || "http://127.0.0.1:5000/root_9p-riscv64.cfg";
     mem_size = (params["mem"] | 0) || 128; /* in mb */
     cmdline = params["cmdline"] || "";
     cols = (params["cols"] | 0) || 80;
