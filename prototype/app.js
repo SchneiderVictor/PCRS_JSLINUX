@@ -47,12 +47,18 @@ app.get('/riscvemu64.js', function(req, res) {
     res.sendFile(__dirname + '/public/riscvemu64.js');
 });
 
+//app.get('/root-riscv64.cfg', function(req, res) {
+//    res.sendFile(__dirname + '/public/root-riscv64.cfg');
 app.get('/root_9p-riscv64.cfg', function(req, res) {
     res.sendFile(__dirname + '/public/root_9p-riscv64.cfg');
 });
 
 app.get('/bbl64.bin', function(req, res) {
     res.sendFile(__dirname + '/public/bbl64.bin');
+});
+
+app.get('/root-riscv64.bin', function(req, res) {
+    res.sendFile(__dirname + '/public/root-riscv64.bin');
 });
 
 app.get(/^\/(tmp\/.+)/, function(req, res) {
@@ -77,7 +83,7 @@ app.get(/^\/(tmp\/.+)/, function(req, res) {
 
 app.post('/initialize', function (req, res) {
     initialize();
-    res.redirect('index2.html?mem=16');
+    res.redirect('index2.html');
 });
 
 app.get('/images/upload-icon.png', function(req, res) {
