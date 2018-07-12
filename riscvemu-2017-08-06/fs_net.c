@@ -1770,6 +1770,7 @@ static void filelist_loaded(FSDevice *fs, FSFile *f, int64_t size, void *opaque)
     buf[size] = '\0';
     fs->fs_delete(fs, f);
     fs->fs_unlinkat(fs, s->root_fd, ".filelist.txt");
+    
     if (filelist_load(fs, (char *)buf) != 0)
         fatal_error("error while parsing file list");
 
