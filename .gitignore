@@ -2,3 +2,4 @@
 *.d
 */riscvemu64.js
 */riscvemu64.wasm
+*.cfg

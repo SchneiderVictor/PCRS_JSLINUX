@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require('express');
+var cors = require('cors');
 var mime=require('mime');
 var expressLogging = require('express-logging');
 var logger = require('logops');
@@ -12,56 +13,62 @@ const http = require('https');
 
 express.static.mime.types['wasm'] = 'application/wasm';
 
+app.use(cors());
 app.use(body_parser.json());
 app.use(express.static(path.join(__dirname + 'public')));
 app.set('views', __dirname + '/public');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(expressLogging(logger));
+app.use(cors());
 
-app.get('/', function(req, res) {
+app.get('/', function(req, res, next) {
     res.render('index.html');
 });
 
-app.get('/style.css', function(req, res) {    
+app.get('/style.css', function(req, res, next) {    
     res.sendFile(__dirname + '/public/style.css');
 });
 
-app.get('/index2.html', function(req, res) {
+app.get('/index2.html', function(req, res, next) {
     res.render('index2.html');
 });
 
-app.get('/riscvemu64.wasm', function(req, res) {
+app.get('/riscvemu64.wasm', function(req, res, next) {
     res.sendFile(__dirname + '/public/riscvemu64.wasm');
 });
 
-app.get('/term.js', function(req, res) {
+app.get('/term.js', function(req, res, next) {
     res.sendFile(__dirname + '/public/term.js');
 });
 
-app.get('/jslinux.js', function(req, res) {
+app.get('/jslinux.js', function(req, res, next) {
     res.sendFile(__dirname + '/public/jslinux.js');
 });
 
-app.get('/riscvemu64.js', function(req, res) {
+app.get('/riscvemu64.js', function(req, res, next) {
     res.sendFile(__dirname + '/public/riscvemu64.js');
 });
 
-//app.get('/root-riscv64.cfg', function(req, res) {
-//    res.sendFile(__dirname + '/public/root-riscv64.cfg');
-app.get('/root_9p-riscv64.cfg', function(req, res) {
+app.get('/root-riscv64.cfg', function(req, res, next) {
+    res.sendFile(__dirname + '/public/root-riscv64.cfg');
+});
+
+app.get('/root_9p-riscv64.cfg', function(req, res, next) {
     res.sendFile(__dirname + '/public/root_9p-riscv64.cfg');
 });
 
-app.get('/bbl64.bin', function(req, res) {
+app.get('/bbl64.bin', function(req, res, next) {
     res.sendFile(__dirname + '/public/bbl64.bin');
 });
 
-app.get('/root-riscv64.bin', function(req, res) {
+app.get('/root-riscv64.bin', function(req, res, next) {
     res.sendFile(__dirname + '/public/root-riscv64.bin');
 });
 
-app.get(/^\/(tmp\/.+)/, function(req, res) {
+app.get(/^\/(tmp\/.+)/, function(req, res, next) {
+    console.log("*** log ***" + req.originalUrl);
+    
     var rx = new RegExp('/head.+');
     var url = req.originalUrl.match(rx);
     var newUrl;
@@ -81,16 +88,16 @@ app.get(/^\/(tmp\/.+)/, function(req, res) {
     });
 });
 
-app.post('/initialize', function (req, res) {
+app.post('/initialize', function (req, res, next) {
     initialize();
     res.redirect('index2.html');
 });
 
-app.get('/images/upload-icon.png', function(req, res) {
+app.get('/images/upload-icon.png', function(req, res, next) {
     res.sendFile(__dirname + '/public/images/upload-icon.png');
 });
 
-app.get('/images/bg-scrollbar-track-y.png', function(req, res) {
+app.get('/images/bg-scrollbar-track-y.png', function(req, res, next) {
     res.sendFile(__dirname + '/public/images/bg-scrollbar-track-y.png');
 });
 
@@ -98,7 +105,7 @@ app.get('/images/bg-scrollbar-trackend-y.png', function(req, res) {
     res.sendFile(__dirname + '/public/images/bg-scrollbar-trackend-y.png');
 });
 
-app.get('/images/bg-scrollbar-thumb-y.png', function(req, res) {
+app.get('/images/bg-scrollbar-thumb-y.png', function(req, res, next) {
     res.sendFile(__dirname + '/public/images/bg-scrollbar-thumb-y.png');
 });
 
