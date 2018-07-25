@@ -1,15 +1,22 @@
 "use strict";
 
-const express = require('express');
 var cors = require('cors');
-var mime=require('mime');
+var mime = require('mime');
 var expressLogging = require('express-logging');
 var logger = require('logops');
-const app = express();
+var fs = require('fs');
+const express = require('express');
 const body_parser = require('body-parser');
 const path = require('path');
-var fs = require('fs');
 const http = require('https');
+const app = express();
+
+var key = fs.readFileSync('certificates/key.pem');
+var cert = fs.readFileSync('certificates/cert.pem');
+var options = {
+    key: key,
+    cert: cert
+};
 
 express.static.mime.types['wasm'] = 'application/wasm';
 
@@ -20,7 +27,18 @@ app.set('views', __dirname + '/public');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 app.use(expressLogging(logger));
-app.use(cors());
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "https://vfsync.org");
+    
+    if(!req.secure) {
+        console.log('*** insecure request received ***');
+        var secureUrl = "https://" + req.headers['host'] + req.url; 
+        res.writeHead(301, { "Location":  secureUrl });
+        res.end();
+    }
+    next();
+});
 
 app.get('/', function(req, res, next) {
     res.render('index.html');
@@ -67,8 +85,6 @@ app.get('/root-riscv64.bin', function(req, res, next) {
 });
 
 app.get(/^\/(tmp\/.+)/, function(req, res, next) {
-    console.log("*** log ***" + req.originalUrl);
-    
     var rx = new RegExp('/head.+');
     var url = req.originalUrl.match(rx);
     var newUrl;
@@ -90,7 +106,7 @@ app.get(/^\/(tmp\/.+)/, function(req, res, next) {
 
 app.post('/initialize', function (req, res, next) {
     initialize();
-    res.redirect('index2.html');
+    res.redirect('https://127.0.0.1:5000/index2.html');
 });
 
 app.get('/images/upload-icon.png', function(req, res, next) {
@@ -109,7 +125,7 @@ app.get('/images/bg-scrollbar-thumb-y.png', function(req, res, next) {
     res.sendFile(__dirname + '/public/images/bg-scrollbar-thumb-y.png');
 });
 
-const server = app.listen(5000, function() {
+const server = http.createServer(options, app).listen(5000, function() {
     console.log("listening on port %d", server.address().port);
 });
 
@@ -117,7 +133,7 @@ function copyFile(src, dest, cb) {
     var cbCalled = false;
     var rd = fs.createReadStream(src);
     var wr = fs.createWriteStream(dest);
-    
+
     rd.on("error", function(err) {
         done(err);
     });
@@ -129,7 +145,7 @@ function copyFile(src, dest, cb) {
     wr.on("close", function(ex) {
         done("file copied.");
     });
-    
+
     rd.pipe(wr);
 
     function done(err) {

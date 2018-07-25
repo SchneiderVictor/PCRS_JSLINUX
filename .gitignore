@@ -1,4 +1,5 @@
 *.o
 *.d
-*/riscvemu64.js
-*/riscvemu64.wasm
+./*/riscvemu64.js
+./*/riscvemu64.wasm
+./prototype/certificates/
