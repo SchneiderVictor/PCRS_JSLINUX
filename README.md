@@ -7,17 +7,17 @@ emsdk is needed, please clone repo https://github.com/juj/emsdk.git and follow i
 
 To run:
 
-`$ cd emsdk
+`$ cd emsdk`
 
-$ source ./emsdk_env.sh
+`$ source ./emsdk_env.sh`
 
-$ cd ../riscvemu-2017-08-06
+`$ cd ../riscvemu-2017-08-06`
 
-$ make -f Makefile.js js/riscvemu64.js
+`$ make -f Makefile.js js/riscvemu64.js`
 
-$ cd ../prototype
+`$ cd ../prototype`
 
-$ nodejs --use_strict app.js (or your equivalent)`
+`$ nodejs --use_strict app.js (or your equivalent)`
 
 open browser: localhost:5000 -> click initialize
 
